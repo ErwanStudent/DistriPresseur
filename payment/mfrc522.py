@@ -28,6 +28,7 @@ Driver class for the MFRC522 board.  RF tag self and writer.
 """
 from machine import Pin, SPI
 from os import uname
+from re import sub
 
 MAX_LEN                            = 16
 CALCULATE_CRC                      = 0x03
@@ -449,14 +450,14 @@ class MFRC522:
     
     def Read_Data(self, sect, serial_number):
         index = 0
-        for i in range(1, 64):
+        for i in range(1, 10):
             if (i+1)%4 != 0:
                 if self.auth(self.AUTH, i, sect, serial_number) == self.OK:#Verification card password
                     if bytearray(self.read(i)) == bytearray(16):
                         index += 1
                         continue
                     else:
-                        print(str(i) + ": " + str(bytearray(self.read(i)).decode()))
+                        return sub('\W+','', str(bytearray(self.read(i)).decode()))
                 else:
                     print("ERROR")
                     return
