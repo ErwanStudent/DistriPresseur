@@ -10,12 +10,13 @@ reader = MFRC522(spi, sda)
 key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
 option = 0
    
-def UpdateCardBalance(actionType, amount):
+def updateCardBalance(actionType, amount):
     if actionType not in ['add', 'remove']:
         print('Action Type not valid')
         return False
     
     try:
+        reader.init()
         while True:
             (status, tag_type) = reader.request(reader.CARD_REQIDL)#Read the card type number
             if status == reader.OK:
@@ -41,5 +42,3 @@ def UpdateCardBalance(actionType, amount):
     except Exception as error:
         print("An exception occurred:", error)
         return False
-                
-UpdateCardBalance('remove', 150)

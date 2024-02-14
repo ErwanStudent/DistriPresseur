@@ -1,5 +1,7 @@
+from keypad import waitKeyPad, getValidation
+from RFID_Payment import updateCardBalance
 from I2C_Screen import updateScreen
-from keypad import waitKeyPad
+import time
 
 articles = [
     { "code": "001", "name": "Coca Cola", "price": 100 },
@@ -10,17 +12,39 @@ articles = [
 def DistriPresseur():
     updateScreen("  Selectionnez", "votre article...")
     
-    articleCode = waitKeypad()
-    print("articleCode")
-    
+    articleCode = waitKeyPad()
     article = findArticleObject(articleCode)
     if not article:
         print("Bad article", articleCode)
-        updateScreen("Article inconnu", articleCode)
-        # Mettre sleep 2s
-        # return DistriPresseur()
+        updateScreen("Article inconnu", "      " + articleCode)
+        time.sleep_ms(2500)
+        return DistriPresseur()
     
+    priceEuro = article["price"]/100
+    articleDisplay = f"{article["name"]} - {priceEuro:2.2f}e"[:16]
+    updateScreen(articleDisplay, "A: Oui    B: Non")
     
+    validationKey = getValidation()
+    if validationKey == "B":
+        print("Cancel")
+        updateScreen("  Achat annule", "Bonne journee !")
+        time.sleep_ms(2500)
+        return DistriPresseur()
+    
+    updateScreen("Presenter Carte", articleDisplay)
+    paymentStatus = updateCardBalance("remove", article["price"])
+    if paymentStatus != True:
+        print("Payment Cancel")
+        updateScreen("Paiement annule", "Ressayer ultérieurement")
+        time.sleep_ms(2500)
+        return DistriPresseur()
+    
+    print("Payment OK")
+    # TODO: Afficher Solde
+    updateScreen("Paiement OK", "")
+    time.sleep_ms(2500)
+    
+    return DistriPresseur()
     
 def findArticleObject(code):
     for x in articles:
