@@ -1,5 +1,6 @@
 from machine import Pin, SoftSPI
 from mfrc522 import MFRC522
+from time import time
 
 sck = Pin(2, Pin.OUT)
 copi = Pin(3, Pin.OUT) # Controller out, peripheral in
@@ -17,8 +18,13 @@ def updateCardBalance(actionType, amount):
     
     try:
         reader.init()
+        startTime = time()
+
         while True:
-            (status, tag_type) = reader.request(reader.CARD_REQIDL)#Read the card type number
+            if time() - startTime > 30:
+                return { "status": False, "error": "Delai depasse" }
+
+            (status, _tag_type) = reader.request(reader.CARD_REQIDL)#Read the card type number
             if status == reader.OK:
                 print('Find the card!')
                 (status, raw_uid) = reader.anticoll()#Reads the card serial number of the selected card
@@ -31,14 +37,16 @@ def updateCardBalance(actionType, amount):
                         if actionType == 'remove':
                             if (amount > cardBalance):
                                 print("Not enough balance")
-                                return False
+                                return { "status": False, "error": "Solde insuffisant", "balance": cardBalance }
                             newBalance = cardBalance - amount
                         else:
                             newBalance = cardBalance + amount
                         
                         print('newBalance', newBalance)
                         reader.Write_Data(key, raw_uid, str(newBalance))
-                        return True
+                        return { "status": True, "balance": newBalance }
     except Exception as error:
         print("An exception occurred:", error)
-        return False
+        return { "status": False, "error": "Erreur Interne" }
+    
+# updateCardBalance('add', 1000)

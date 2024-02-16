@@ -32,16 +32,16 @@ def DistriPresseur():
         return DistriPresseur()
     
     updateScreen("Presenter Carte", articleDisplay)
-    paymentStatus = updateCardBalance("remove", article["price"])
-    if paymentStatus != True:
-        print("Payment Cancel")
-        updateScreen("Paiement annule", "Ressayer ultérieurement")
+    paymentData = updateCardBalance("remove", article["price"])
+    if paymentData["status"] == False:
+        print("Payment Cancel", paymentData["error"])
+        updateScreen(paymentData["error"], "Ressayer + tard")
         time.sleep_ms(2500)
         return DistriPresseur()
     
-    print("Payment OK")
-    # TODO: Afficher Solde
-    updateScreen("Paiement OK", "")
+    newSoldeEuro = paymentData["balance"]/100
+    print("Payment OK", f"newSolde {newSoldeEuro}")
+    updateScreen("Paiement OK", f"New Solde: {newSoldeEuro}e"[:16])
     time.sleep_ms(2500)
     
     return DistriPresseur()
