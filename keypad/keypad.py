@@ -1,6 +1,4 @@
 from keypad_driver import KeyPad
-from machine import Pin
-
 from I2C_Screen import updateScreen
 import time
 
