@@ -9,9 +9,9 @@ def updateScreen(line1, line2):
     if devices != []:
         lcd = I2CLcd(i2c, devices[0], 2, 16)
         lcd.move_to(0, 0)
-        lcd.putstr(line1)
+        lcd.putstr(line1[:16].center(16))
         lcd.move_to(0, 1)
-        lcd.putstr(line2)
+        lcd.putstr(line2[:16].center(16))
         return True
     else:
         print("No address found")
