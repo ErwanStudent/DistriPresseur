@@ -6,7 +6,7 @@ keyPad = KeyPad(13, 12, 11, 10, 9, 8, 7, 6)
 
 validationOption = ["A", "B"]
 
-def waitKeyPad(ignoreStartTimeout):
+def waitKeyPad(ignoreStartTimeout = False, screenText = None, keyLength = 3):
     keyIn = ""
     startTime = time()
     while True:
@@ -18,30 +18,23 @@ def waitKeyPad(ignoreStartTimeout):
             startTime = time()
             sleep_ms(100)
             keyIn += keyData
-            updateScreen("Code produit", keyIn)
+            if screenText:
+                updateScreen(screenText, keyIn)
         
-        if len(keyIn) == 3:
+        if len(keyIn) == keyLength:
             print("Keypad Value", keyIn)
             return keyIn
         
 def getValidation():
-    startTime = time()
-    while True:
-        if time() - startTime > 30:
-            return False
-        
-        keyData = getKey()
-        if keyData != None:
-            print("keyData", keyData)
-            if not keyData in validationOption:
-                print("Bad Validation Option")
-                updateScreen("Mauvais choix", "A: Oui    B: Non")
-                return getValidation()
+    keyData = waitKeyPad(False, None, 1)
+    if keyData != None:
+        print("keyData", keyData)
+        if not keyData in validationOption:
+            print("Bad Validation Option")
+            updateScreen("Mauvais choix", "A: Oui    B: Non")
+        return keyData
+    return False
     
-            return keyData 
-    
-
-
 def getKey():
     keyvalue = keyPad.scan()
     if keyvalue != None:

@@ -7,7 +7,7 @@ from time import sleep_ms
 def DistriPresseur():
     updateScreen("Selectionnez", "votre article...")
     
-    actionCode = waitKeyPad(True)
+    actionCode = waitKeyPad(True, "Code produit")
     if not actionCode:
         print("Cancel Keypad")
         updateScreen("Action annulee", "Bonne journee !")
