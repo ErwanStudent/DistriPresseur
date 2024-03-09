@@ -3,21 +3,22 @@ from RFID_Payment import updateCardBalance
 from I2C_Screen import updateScreen
 from buzzer import createSound
 
-from time import time, sleep_ms
+from time import sleep_ms
 
 actions = [
     { "type": "article", "code": "001", "name": "Coca Cola", "price": 100, "stock": 3 },
     { "type": "article", "code": "002", "name": "Perrier", "price": 50, "stock": 3 },
-    { "type": "article", "code": "003", "name": "Orangina", "price": 130, "stock": 3 },
+    { "type": "article", "code": "003", "name": "Orangina", "price": 130, "stock": 0 },
     
-    { "type": "manage_stocks", "code": "123" },
+    { "type": "manage_stocks", "code": "#9#" },
 ]
 
 def buyArticle(article):
     if article["stock"] == 0:
         print("No enough stock", article["name"])
         updateScreen("Plus de stock", article["name"])
-        sleep_ms(2500)
+        createSound(5, 300)
+        sleep_ms(1000)
         return False
     
     priceEuro = article["price"]/100
@@ -43,7 +44,7 @@ def buyArticle(article):
     createSound(2, 50)
     newSoldeEuro = paymentData["balance"]/100
     print("Payment OK", f"newSolde {newSoldeEuro}", article["name"])
-    updateScreen("Paiement OK", f"New Solde: {newSoldeEuro}e")
+    updateScreen("Paiement OK", f"New Solde: {newSoldeEuro:2.2f}e")
     sleep_ms(2500)
     
     # Remove article in stock
@@ -53,7 +54,7 @@ def buyArticle(article):
 
 def manageStocks():
     updateScreen("Code de", "votre article ?")
-    articleCode = waitKeyPad(True)
+    articleCode = waitKeyPad(False, "Code produit")
     if not articleCode:
         print("Cancel Keypad ManageStocks")
         updateScreen("Action annulee", "Bonne journee !")
@@ -67,7 +68,27 @@ def manageStocks():
         sleep_ms(2500)
         return manageStocks()
     
+    updateScreen("Stock de", f"{article["name"]} ?")
+    stockKeyPad = waitKeyPad(False, None, 1)
     
+    if not stockKeyPad.isdigit():
+        print("Invalid Number", articleCode, stockKeyPad)
+        updateScreen("Nombre invalide", stockKeyPad)
+        sleep_ms(2500)
+        return manageStocks()
+    
+    stockNumber = int(stockKeyPad)
+    if stockNumber > 3:
+        print("Max stock Number", articleCode, stockNumber)
+        updateScreen("Max Stocks = 3", stockKeyPad)
+        sleep_ms(2500)
+        return manageStocks()
+    
+    article["stock"] = stockNumber
+    updateScreen(f"Stock {article["name"]}", f"New: {stockKeyPad}")
+    sleep_ms(2500)
+    
+    return True
     
 def findActionObject(code):
     for action in actions:
