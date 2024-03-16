@@ -2,7 +2,7 @@ from keypad_driver import KeyPad
 from I2C_Screen import updateScreen
 from time import time, sleep_ms
 
-keyPad = KeyPad(13, 12, 11, 10, 9, 8, 7, 6)
+keyPad = KeyPad(8, 9, 10, 11, 12, 13, 14, 15)
 
 validationOption = ["A", "B"]
 

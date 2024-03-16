@@ -1,8 +1,7 @@
-import time
 from machine import I2C, Pin
 from I2C_LCD import I2CLcd
 
-i2c = I2C(1, sda=Pin(14), scl=Pin(15), freq=400000)
+i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
 devices = i2c.scan()
 
 def updateScreen(line1, line2):

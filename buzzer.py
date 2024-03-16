@@ -1,7 +1,7 @@
 from machine import Pin
 from time import sleep_ms
 
-buzzer = Pin(16, Pin.OUT)
+buzzer = Pin(28, Pin.OUT)
 
 def createSound(frequency, delay_ms):
     for i in range(frequency):

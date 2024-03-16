@@ -2,11 +2,11 @@ from machine import Pin, SoftSPI
 from mfrc522 import MFRC522
 from time import time
 
-sck = Pin(2, Pin.OUT)
+sck = Pin(4, Pin.OUT)
 copi = Pin(3, Pin.OUT) # Controller out, peripheral in
-cipo = Pin(4, Pin.OUT) # Controller in, peripheral out
+cipo = Pin(5, Pin.OUT) # Controller in, peripheral out
 spi = SoftSPI(baudrate=100000, polarity=0, phase=0, sck=sck, mosi=copi, miso=cipo)
-sda = Pin(5, Pin.OUT)
+sda = Pin(2, Pin.OUT)
 reader = MFRC522(spi, sda)
 key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
 option = 0
