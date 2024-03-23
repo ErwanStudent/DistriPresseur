@@ -1,19 +1,15 @@
 from actions import findActionObject, buyArticle, manageStocks
+from Presseur import Presseur, waitButton
 from I2C_Screen import updateScreen
-# from Presseur import addCountCapacity
 from keypad import waitKeyPad
 
 from time import sleep_ms
-
-from machine import Pin
 from _thread import start_new_thread
 
-# button = Pin(17, Pin.IN, Pin.PULL_DOWN)
-
-def DistriPresseur():
+def DistriPresseur(notEnded = False):
     updateScreen("Selectionnez", "votre article...")
+    actionCode = waitKeyPad(True, "Code produit", 3)
     
-    actionCode = waitKeyPad(True, "Code produit")
     if not actionCode:
         print("Cancel Keypad")
         updateScreen("Action annulee", "Bonne journee !")
@@ -34,16 +30,20 @@ def DistriPresseur():
      
     return DistriPresseur()
 
-#def Presseur(_pin):
-#    addCountCapacity()
+def PresseurBase():
+    while True: 
+        waitButton()
+        
+        print('vra')
+        # Securité si autre partie déjà lancée
+    
+        Presseur()
+        
+        # Reset
+        updateScreen("Selectionnez", "votre article...")
 
-#def ouioui():
-#    print("vroum vroum")
-#    sleep_ms(2500)
-#    return ouioui()
-
+start_new_thread(PresseurBase, ())
 DistriPresseur()
-# start_new_thread(ouioui, ())
-# button.irq(trigger=Pin.IRQ_RISING, handler=Presseur)
+
 
 
