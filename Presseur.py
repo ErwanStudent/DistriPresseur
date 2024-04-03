@@ -36,8 +36,8 @@ def Presseur():
     
     addCountCapacity()
     
-    updateScreen("Presenter Carte", "+10cts recyclage")
-    paymentData = updateCardBalance('add', 10)
+    updateScreen("Presenter Carte", "+50cts recyclage")
+    paymentData = updateCardBalance('add', 50)
     if paymentData["status"] == False:
         print("Payment Cancel", paymentData["error"])
         updateScreen(paymentData["error"], "Bonne journée")
@@ -71,6 +71,9 @@ def addCountCapacity():
         _RGB(255,128,0)
     elif capacity >=10:
         _RGB(255,0,0)
+
+def getButton():
+    return button.value()
 
 def waitButton(timeout = 0):
     startTime = time()

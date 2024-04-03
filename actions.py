@@ -6,9 +6,9 @@ from buzzer import createSound
 from time import sleep_ms
 
 actions = [
-    { "type": "article", "code": "001", "name": "Coca Cola", "price": 100, "stock": 3 },
-    { "type": "article", "code": "002", "name": "Perrier", "price": 50, "stock": 3 },
-    { "type": "article", "code": "003", "name": "Orangina", "price": 130, "stock": 0 },
+    { "type": "article", "code": "001", "name": "Coca Cola", "price": 150, "stock": 50 },
+    { "type": "article", "code": "002", "name": "Perrier", "price": 100, "stock": 50 },
+    { "type": "article", "code": "003", "name": "Orangina", "price": 150, "stock": 0 },
     
     { "type": "manage_stocks", "code": "#9#" },
 ]
@@ -32,7 +32,7 @@ def buyArticle(article):
         sleep_ms(2500)
         return False
     
-    updateScreen("Presenter Carte", articleDisplay)
+    updateScreen("Presentez Carte", articleDisplay)
     paymentData = updateCardBalance("remove", article["price"])
     if paymentData["status"] == False:
         print("Payment Cancel", paymentData["error"])
