@@ -11,15 +11,20 @@ def waitKeyPad(ignoreStartTimeout = False, screenText = None, keyLength = 3):
     startTime = time()
     while True:
         if ((not ignoreStartTimeout) or len(keyIn)) and (time() - startTime > 30):
-            return False
+            return "timeout"
         
         keyData = getKey()
+        # Optimisation vu qu'on utilise pas de threads pour boutons/numpad
+        if ignoreStartTimeout and not len(keyIn) and not keyData:
+            return False
+        
         if keyData != None:
             startTime = time()
             sleep_ms(100)
             keyIn += keyData
             if screenText:
-                updateScreen(screenText, keyIn)
+                keyText = keyIn + '_' * (keyLength - len(keyIn))
+                updateScreen(screenText, keyText)
         
         if len(keyIn) == keyLength:
             print("Keypad Value", keyIn)

@@ -1,49 +1,38 @@
 from actions import findActionObject, buyArticle, manageStocks
-from Presseur import Presseur, waitButton
+from Presseur import Presseur, getButton
 from I2C_Screen import updateScreen
 from keypad import waitKeyPad
 
 from time import sleep_ms
-from _thread import start_new_thread
 
-def DistriPresseur(notEnded = False):
+def DistriPresseur():
     updateScreen("Selectionnez", "votre article...")
-    actionCode = waitKeyPad(True, "Code produit", 3)
+    while True:
+        actionCode = waitKeyPad(True, "Code produit", 3)
+        if actionCode:
+            if actionCode == "timeout":
+                print("Cancel Keypad")
+                updateScreen("Action annulee", "Bonne journee !")
+                sleep_ms(2500)
+                return DistriPresseur()
+                
+            action = findActionObject(actionCode)
+            if not action:
+                print("Bad action", actionCode)
+                updateScreen("Action inconnue", actionCode)
+                sleep_ms(2500)
+                return DistriPresseur()
     
-    if not actionCode:
-        print("Cancel Keypad")
-        updateScreen("Action annulee", "Bonne journee !")
-        sleep_ms(2500)
-        return DistriPresseur()
-    
-    action = findActionObject(actionCode)
-    if not action:
-        print("Bad action", actionCode)
-        updateScreen("Action inconnue", actionCode)
-        sleep_ms(2500)
-        return DistriPresseur()
-    
-    if action["type"] == "article":
-        buyArticle(action)
-    elif action["type"] == "manage_stocks":
-        manageStocks()
-     
-    return DistriPresseur()
-
-def PresseurBase():
-    while True: 
-        waitButton()
+            if action["type"] == "article":
+                buyArticle(action)
+            elif action["type"] == "manage_stocks":
+                manageStocks()
+            
+            return DistriPresseur()
         
-        print('vra')
-        # Securité si autre partie déjà lancée
-    
-        Presseur()
-        
-        # Reset
-        updateScreen("Selectionnez", "votre article...")
+        buttonClic = getButton()
+        if buttonClic:
+            Presseur()
+            return DistriPresseur()
 
-start_new_thread(PresseurBase, ())
 DistriPresseur()
-
-
-
