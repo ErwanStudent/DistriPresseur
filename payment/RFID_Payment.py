@@ -49,4 +49,4 @@ def updateCardBalance(actionType, amount):
         print("An exception occurred:", error)
         return { "status": False, "error": "Erreur Interne" }
     
-# updateCardBalance('add', 1000)
+#updateCardBalance('add', 0)

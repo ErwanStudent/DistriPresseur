@@ -1,5 +1,6 @@
 from keypad import getValidation, waitKeyPad
 from RFID_Payment import updateCardBalance
+from motor import upMotor, downMotor
 from I2C_Screen import updateScreen
 from buzzer import createSound
 
@@ -46,6 +47,9 @@ def buyArticle(article):
     print("Payment OK", f"newSolde {newSoldeEuro}", article["name"])
     updateScreen("Paiement OK", f"New Solde: {newSoldeEuro:2.2f}e")
     sleep_ms(2500)
+    
+    upMotor()
+    downMotor()
     
     # Remove article in stock
     article["stock"] = article["stock"] - 1

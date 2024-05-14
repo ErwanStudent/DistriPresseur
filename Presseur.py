@@ -1,6 +1,7 @@
 from RFID_Payment import updateCardBalance
 from I2C_Screen import updateScreen
 from buzzer import createSound
+from motor import upMotor, downMotor
 
 from time import sleep_ms, time
 from machine import PWM, Pin
@@ -16,7 +17,14 @@ Blue.freq(1000)
 
 capacity = 0
 
-def Presseur():    
+def Presseur():
+    if capacity >= 10:
+        print("Bac plein")
+        updateScreen("Bac plein", "Ressayer + tard")
+        createSound(3, 500)
+        sleep_ms(1000)
+        return False
+    
     # Open Door
     
     updateScreen("Poser la canette", "Clic quand fini")
@@ -33,6 +41,10 @@ def Presseur():
     
     # Close Door
     # Can => Poubelle
+    
+    updateScreen("Recyclage", "en cours")
+    upMotor()
+    downMotor()
     
     addCountCapacity()
     
@@ -52,15 +64,6 @@ def Presseur():
     sleep_ms(2500)
     
     return True
-
-#def pressCan():
-    # Open Door
-    # Wait reclic button
-    # Close Door
-    # Can => Poubelle
-    # Add Count
-    # Demander carte pour remboursement
-    # Retour au début
 
 def addCountCapacity():
     global capacity
